@@ -1,0 +1,687 @@
+<title>Turquesa · Índex</title>
+<style>
+  /* Palette grounded in real brand assets: logo (#8C693C gold script), site h1 color read live via devtools (#24A0B2 teal, Poppins 29px). Warm, light, "clara · humana · leve" — the opposite register of a dark deck, on purpose. */
+  :root{
+    --bg:#FAF7F2; --card:#FFFFFF; --line:#E5DFD3;
+    --fg:#20282A; --fg-dim:#54605F; --fg-faint:#8E9593;
+    --teal:#24A0B2; --teal-dim:#6DBFCC;
+    --gold:#8C693C; --gold-dim:#B79A74;
+    --display:'Poppins','Helvetica Neue',Arial,sans-serif;
+    --body:'Poppins','Helvetica Neue',Arial,sans-serif;
+    color-scheme:light;
+  }
+
+  /* ---- dark-page modifier: used on select screens (fechamento, porta-vozes) for rhythm + logo contrast ---- */
+  section.screen.dark{
+    --bg:#172327; --card:#1E2D31; --line:#2B3C40;
+    --fg:#F6F3EC; --fg-dim:#CBD4D3; --fg-faint:#8FA19F;
+    background:var(--bg); color:var(--fg);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:var(--body); -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+  h1,h2,h3{font-family:var(--display); font-weight:600; margin:0; letter-spacing:-.01em}
+  p{margin:0}
+  .num{font-variant-numeric:tabular-nums}
+  a{color:inherit}
+
+  #scroller{
+    height:100dvh; width:100vw; overflow-x:auto; overflow-y:hidden;
+    scroll-snap-type:x mandatory; display:flex; flex-direction:row;
+    -webkit-overflow-scrolling:touch;
+  }
+  @media (prefers-reduced-motion:reduce){ #scroller{ scroll-snap-type:none } }
+
+  section.screen{
+    flex:0 0 100vw; width:100vw; height:100dvh;
+    scroll-snap-align:start; scroll-snap-stop:always;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:clamp(28px,5vw,80px) clamp(24px,7vw,120px);
+    position:relative; border-right:1px solid var(--line);
+    overflow-y:auto; background:var(--bg);
+  }
+  .inner{max-width:1180px; margin:0 auto; width:100%}
+  section.screen.content{justify-content:flex-start; padding-top:clamp(96px,16vh,160px)}
+  section.screen.content .inner{display:flex; flex-direction:column; flex:1; min-height:0; padding-bottom:clamp(24px,5vh,56px)}
+
+  /* ---- reveal motion ---- */
+  .reveal{opacity:0; transform:translateY(22px) scale(.98); transition:opacity .8s cubic-bezier(.16,.8,.3,1), transform .8s cubic-bezier(.16,.8,.3,1)}
+  .reveal.in{opacity:1; transform:translateY(0) scale(1)}
+  .reveal.d1{transition-delay:.08s} .reveal.d2{transition-delay:.16s}
+  .reveal.d3{transition-delay:.24s} .reveal.d4{transition-delay:.32s}
+  @media (prefers-reduced-motion:reduce){ .reveal{opacity:1; transform:none; transition:none} }
+
+  .tiles .tile, .steps .step, .notes .note, .pillars .pillar, .personas .persona, .formats .fmt{
+    opacity:0; transform:translateY(16px);
+    transition:opacity .65s cubic-bezier(.16,.8,.3,1), transform .65s cubic-bezier(.16,.8,.3,1), border-color .3s, box-shadow .3s;
+  }
+  .tiles.in .tile, .steps.in .step, .notes.in .note, .pillars.in .pillar, .personas.in .persona, .formats.in .fmt{ opacity:1; transform:translateY(0) }
+  .tiles .tile:nth-child(1), .steps .step:nth-child(1), .notes .note:nth-child(1), .pillars .pillar:nth-child(1), .personas .persona:nth-child(1), .formats .fmt:nth-child(1){transition-delay:.06s}
+  .tiles .tile:nth-child(2), .steps .step:nth-child(2), .notes .note:nth-child(2), .pillars .pillar:nth-child(2), .personas .persona:nth-child(2), .formats .fmt:nth-child(2){transition-delay:.12s}
+  .tiles .tile:nth-child(3), .steps .step:nth-child(3), .notes .note:nth-child(3), .pillars .pillar:nth-child(3), .personas .persona:nth-child(3), .formats .fmt:nth-child(3){transition-delay:.18s}
+  .tiles .tile:nth-child(4), .steps .step:nth-child(4), .notes .note:nth-child(4), .pillars .pillar:nth-child(4){transition-delay:.24s}
+  .tiles .tile:nth-child(5), .steps .step:nth-child(5), .pillars .pillar:nth-child(5){transition-delay:.30s}
+  .tiles .tile:nth-child(6), .pillars .pillar:nth-child(6){transition-delay:.36s}
+  .pillars .pillar:nth-child(7){transition-delay:.42s}
+  @media (prefers-reduced-motion:reduce){
+    .tiles .tile, .steps .step, .notes .note, .pillars .pillar, .personas .persona, .formats .fmt{ opacity:1; transform:none; transition:none }
+  }
+
+  /* ---- ambient backdrop: faint diagonal grid ---- */
+  body::before{
+    content:""; position:fixed; inset:-20vmax; z-index:0; pointer-events:none;
+    background-image:
+      repeating-linear-gradient(45deg, var(--line) 0, var(--line) 1px, transparent 1px, transparent 64px),
+      repeating-linear-gradient(-45deg, var(--line) 0, var(--line) 1px, transparent 1px, transparent 64px);
+    opacity:.5;
+    animation:driftgrid 50s linear infinite;
+    will-change:transform;
+  }
+  @keyframes driftgrid{ 0%{transform:translate(0,0)} 100%{transform:translate(64px,64px)} }
+  @media (prefers-reduced-motion:reduce){ body::before{animation:none} }
+  section.screen, nav.dots, #progress{ position:relative; z-index:1 }
+
+  /* ---- progress bar ---- */
+  #progress{position:fixed; top:0; left:0; height:2px; background:var(--teal); width:0%; z-index:40; transition:width .1s linear; box-shadow:0 0 10px 1px color-mix(in srgb, var(--teal) 50%, transparent)}
+
+  /* ---- dot nav ---- */
+  nav.dots{
+    position:fixed; left:50%; bottom:clamp(14px,3vh,32px); transform:translateX(-50%);
+    z-index:30; display:flex; flex-direction:row; gap:14px; align-items:center;
+  }
+  nav.dots button{all:unset; cursor:pointer; display:flex; align-items:center; position:relative}
+  nav.dots .dot{width:6px; height:6px; border-radius:50%; background:var(--fg-faint); transition:all .3s}
+  nav.dots button.active .dot{background:var(--teal); width:22px; border-radius:4px}
+  nav.dots button.active .dot::after{
+    content:""; position:absolute; inset:-6px; border:1px solid var(--teal); border-radius:8px;
+    opacity:0; animation:dotping 1.6s ease-out infinite;
+  }
+  @keyframes dotping{0%{opacity:.5; transform:scale(.85)} 100%{opacity:0; transform:scale(1.5)}}
+  @media (prefers-reduced-motion:reduce){ nav.dots button.active .dot::after{animation:none; display:none} }
+
+  /* ---- hero / capa ---- */
+  #hero{background:radial-gradient(560px circle at var(--mx,50%) var(--my,38%), color-mix(in srgb, var(--teal) 7%, transparent), transparent 62%); transition:background-position .2s}
+  .tag-corner{position:absolute; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--fg-faint)}
+  .cat{top:clamp(28px,5vw,64px); left:clamp(24px,7vw,120px)}
+  .client{top:clamp(28px,5vw,64px); right:clamp(24px,7vw,120px); text-align:right; color:var(--teal); font-weight:600; letter-spacing:.18em}
+  .cover-title{font-size:clamp(12px,1.6vw,16px); font-weight:500; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); font-family:var(--body)}
+  .cover-month{
+    font-family:var(--display); font-size:clamp(36px,6.4vw,84px); font-weight:700; letter-spacing:-.02em; line-height:1.04; margin-top:16px; color:var(--fg);
+  }
+  .cover-month i{font-style:italic; color:var(--teal)}
+  .swipe-cue{position:absolute; right:clamp(24px,7vw,120px); bottom:clamp(28px,5vh,56px); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--fg-faint); display:flex; align-items:center; gap:12px}
+  .swipe-cue .chev{display:flex; gap:2px}
+  .swipe-cue .chev span{width:6px; height:6px; border-top:1.4px solid var(--teal); border-right:1.4px solid var(--teal); transform:rotate(45deg); animation:nudge 1.8s ease-in-out infinite}
+  .swipe-cue .chev span:nth-child(2){animation-delay:.15s}
+  .swipe-cue .chev span:nth-child(3){animation-delay:.3s}
+  @keyframes nudge{0%,100%{opacity:.25; transform:translateX(0) rotate(45deg)} 50%{opacity:1; transform:translateX(5px) rotate(45deg)}}
+  @media (prefers-reduced-motion:reduce){ .swipe-cue .chev span{animation:none; opacity:.7} }
+
+  /* ---- section heading ---- */
+  /* single shared definition of the brand mark image — referenced via background-image
+     by both the kicker-line marker and the orbit flourish, so the asset is embedded once
+     in this file instead of duplicated at every use site. */
+  /* ---- butterfly brand mark: pure vector (no raster — avoids any extraction/antialiasing
+     artifacts), two wing pairs that flap via CSS transform. Used everywhere the old
+     raster mark used to be: traveling on kicker lines, the hero ribbon, and the
+     corner swarm. ---- */
+  .bfly-icon{ width:100%; height:100%; display:block; overflow:visible; color:var(--teal) }
+  .bfly-icon .wl{ transform-origin:40px 32px; animation:bflap-l 2.1s ease-in-out infinite }
+  .bfly-icon .wr{ transform-origin:40px 32px; animation:bflap-r 2.1s ease-in-out infinite }
+  @keyframes bflap-l{ 0%,100%{ transform:scaleX(1) rotate(0deg) } 50%{ transform:scaleX(.45) rotate(-10deg) } }
+  @keyframes bflap-r{ 0%,100%{ transform:scaleX(1) rotate(0deg) } 50%{ transform:scaleX(.45) rotate(10deg) } }
+  @media (prefers-reduced-motion:reduce){ .bfly-icon .wl, .bfly-icon .wr{ animation:none } }
+
+  .kicker{display:flex; align-items:center; gap:14px; margin-bottom:22px}
+  .kn{font-size:12px; border:1px solid var(--teal); color:var(--teal); padding:5px 9px; letter-spacing:.06em; position:relative; font-weight:600}
+  .kn::before{
+    content:""; position:absolute; inset:-5px; border:1px solid var(--line); border-radius:2px;
+    animation:kicktick 3.4s ease-in-out infinite;
+  }
+  @keyframes kicktick{0%,100%{opacity:0; transform:scale(1)} 50%{opacity:1; transform:scale(1.08)}}
+  @media (prefers-reduced-motion:reduce){ .kn::before{animation:none; display:none} }
+  .kt{font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--fg-faint)}
+
+  /* ---- kicker connector: a winding dotted "circuit" — the real brand mark travels along
+     it, rising on some pages and dipping on others ("entre altos e baixos"), like a path
+     threading through the steps of the deck. Two variants (.up / .down) alternate per screen.
+     The mark does NOT loop on its own — it only travels when its page becomes active
+     (".play" class, toggled by the section IntersectionObserver on navigation), so the
+     "circuit" visibly advances as you move through the deck, same mechanism the hero
+     ribbon-line uses. ---- */
+  .kline{flex:1; position:relative; height:26px; min-width:60px; overflow:visible}
+  .kline svg{width:100%; height:100%; display:block; overflow:visible}
+  .kline path{fill:none; stroke:var(--line); stroke-width:1.6; stroke-dasharray:1 7; stroke-linecap:round}
+  .kline .kmark{
+    position:absolute; left:0%; top:50%; width:17px; height:17px; margin:-9px 0 0 -9px;
+    display:flex; align-items:center; justify-content:center; opacity:0;
+  }
+  .kline.play .kmark{ animation:travel-up 7s ease-in-out infinite }
+  .kline.down.play .kmark{ animation-name:travel-down }
+  .kline .kmark::before{
+    content:""; position:absolute; inset:-5px; border-radius:50%;
+    background:radial-gradient(circle, color-mix(in srgb, var(--teal) 55%, transparent), transparent 70%);
+    opacity:0;
+  }
+  .kline.play .kmark::before{ animation:kglow 7s ease-in-out infinite }
+  .kline .kmark .bfly-icon{ width:100%; height:100%; position:relative }
+  @keyframes travel-up{
+    0%{ left:0%; top:50%; opacity:0 }
+    10%{ opacity:1 }
+    50%{ left:50%; top:10%; }
+    90%{ opacity:1 }
+    100%{ left:100%; top:50%; opacity:0 }
+  }
+  @keyframes travel-down{
+    0%{ left:0%; top:50%; opacity:0 }
+    10%{ opacity:1 }
+    50%{ left:50%; top:90%; }
+    90%{ opacity:1 }
+    100%{ left:100%; top:50%; opacity:0 }
+  }
+  @keyframes kglow{ 0%,100%{ opacity:.3 } 50%{ opacity:.85 } }
+  @media (prefers-reduced-motion:reduce){
+    .kline .kmark{ animation:none !important; left:50% !important; top:50% !important; opacity:1 }
+    .kline .kmark::before{ animation:none !important; opacity:.5 }
+  }
+
+  .heading{font-size:clamp(26px,3.6vw,44px)}
+  .dek{color:var(--fg-dim); font-size:15px; max-width:95ch; margin-top:14px; line-height:1.7; font-weight:300}
+
+  /* ---- stat tiles (calendário) ---- */
+  .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); grid-auto-rows:1fr; gap:1px; background:var(--line); border:1px solid var(--line); margin-top:30px; flex:1; min-height:0}
+  /* explicit 3-column grid for the 6-tile calendário: auto-fit was dropping to 4 columns at
+     some widths, leaving an unbalanced 4+2 wrap — a fixed 3x2 always reads cleanly */
+  .tiles.tiles-fixed3{grid-template-columns:repeat(3,1fr)}
+  @media (max-width:760px){ .tiles.tiles-fixed3{grid-template-columns:repeat(2,1fr)} }
+  .tile{background:var(--card); padding:26px 20px; min-width:0; display:flex; flex-direction:column; justify-content:flex-start}
+  .tile .v{font-family:var(--display); font-size:clamp(30px,3.6vw,46px); font-weight:700; letter-spacing:-.01em; line-height:1; white-space:nowrap; color:var(--teal)}
+  .tile .vl{flex:1; display:flex; flex-direction:column; justify-content:center}
+  .tile .ti{width:22px; height:22px; color:var(--fg-faint); flex-shrink:0; margin-bottom:12px; transition:color .3s}
+  .tiles .tile:hover .ti{color:var(--teal)}
+  .tile .l{color:var(--fg-dim); font-size:12.5px; margin-top:10px; line-height:1.4}
+  .tiles .tile:hover{background:color-mix(in srgb, var(--teal) 6%, var(--card)); transform:translateY(-3px); transition-duration:.3s box-shadow:0 14px 28px -12px color-mix(in srgb, var(--teal) 40%, transparent);}
+
+  /* ---- steps (3-4 col cards with number) ---- */
+  .steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); grid-auto-rows:1fr; gap:1px; background:var(--line); border:1px solid var(--line); margin-top:28px; flex:1; min-height:0}
+  .step{background:var(--card); padding:30px 26px; display:flex; flex-direction:column; justify-content:flex-start}
+  .step{position:relative}
+  .step .ico{margin-bottom:10px; flex-shrink:0}
+  .step .n{font-family:var(--display); font-size:24px; font-weight:700; line-height:1; color:var(--gold)}
+  .step h3{font-size:15.5px; font-weight:600; margin-top:12px; letter-spacing:.01em}
+  .step p{font-size:12.5px; color:var(--fg-dim); line-height:1.65; margin-top:8px; font-weight:300}
+  .step .sub{font-size:11px; color:var(--fg-faint); margin-top:auto; padding-top:12px; letter-spacing:.02em}
+  .steps .step:hover{background:color-mix(in srgb, var(--teal) 6%, var(--card)); transform:translateY(-3px); transition-duration:.3s box-shadow:0 14px 28px -12px color-mix(in srgb, var(--teal) 40%, transparent);}
+  /* ---- step-to-step connector: reinforces "passo a passo" sequence ---- */
+  .steps.chain{background:none; border:none; gap:22px}
+  .steps.chain .step{border:1px solid var(--line)}
+  .steps.chain .step:not(:last-child)::after{
+    content:""; position:absolute; top:50%; right:-19px; width:10px; height:10px; z-index:2;
+    border-top:1.6px solid var(--teal); border-right:1.6px solid var(--teal);
+    transform:translateY(-50%) rotate(45deg);
+  }
+  @media (max-width:900px){ .steps.chain .step:not(:last-child)::after{ display:none } }
+
+  /* ---- pillars grid (7 editorial pillars, condensed) ---- */
+  .pillars{display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:1fr; gap:14px; margin-top:26px; flex:1; min-height:0}
+  .pillar{background:var(--card); border:1px solid var(--line); padding:22px 20px; display:flex; flex-direction:column; justify-content:flex-start; min-height:0; position:relative}
+  .pillar .pn{font-family:var(--display); font-size:19px; font-weight:700; color:var(--teal); line-height:1}
+  .pillar .pi{position:absolute; top:20px; right:18px; width:18px; height:18px; color:var(--gold-dim)}
+  .pillar h3{font-size:13.5px; font-weight:600; margin-top:9px; line-height:1.3}
+  .pillar p{font-size:11px; color:var(--fg-dim); line-height:1.55; margin-top:8px; font-weight:300; flex:1}
+  .pillars .pillar:hover{background:color-mix(in srgb, var(--teal) 6%, var(--card)); transition-duration:.3s box-shadow:0 14px 28px -12px color-mix(in srgb, var(--teal) 40%, transparent);}
+
+  /* ---- personas (2 wide cards) ---- */
+  .personas{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); grid-auto-rows:1fr; gap:1px; background:var(--line); border:1px solid var(--line); margin-top:30px; flex:1; min-height:0}
+  .persona{background:var(--card); padding:32px 30px; display:flex; flex-direction:column; justify-content:flex-start; gap:14px}
+  .persona .pi{width:26px; height:26px; color:var(--teal)}
+  .persona .pk{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); font-weight:600}
+  .persona h3{font-family:var(--display); font-size:23px; font-weight:700; color:var(--fg)}
+  .persona p{font-size:13px; color:var(--fg-dim); line-height:1.7; font-weight:300}
+  .personas .persona:hover{background:color-mix(in srgb, var(--teal) 6%, var(--card)); transition-duration:.3s box-shadow:0 14px 28px -12px color-mix(in srgb, var(--teal) 40%, transparent);}
+
+  /* ---- formats (reels/carrossel/stories, execução) ---- */
+  .formats{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); grid-auto-rows:1fr; gap:1px; background:var(--line); border:1px solid var(--line); margin-top:28px; flex:1; min-height:0}
+  .fmt{background:var(--card); padding:28px 26px; display:flex; flex-direction:column; justify-content:flex-start}
+  .fmt .fi{width:24px; height:24px; color:var(--gold); margin-bottom:14px}
+  .fmt .fk{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--teal); font-weight:600}
+  .fmt p{font-size:12.5px; color:var(--fg-dim); line-height:1.7; margin-top:12px; font-weight:300}
+  .formats .fmt:hover{background:color-mix(in srgb, var(--teal) 6%, var(--card)); transition-duration:.3s box-shadow:0 14px 28px -12px color-mix(in srgb, var(--teal) 40%, transparent);}
+
+  /* ---- notes (3 short cards: personalidade / diretrizes / mensuração) ---- */
+  .notes{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); grid-auto-rows:1fr; gap:1px; background:var(--line); border:1px solid var(--line); margin-top:28px; flex:1; min-height:0}
+  .note{background:var(--card); padding:28px 26px; display:flex; flex-direction:column; justify-content:flex-start}
+  .note .ni{width:22px; height:22px; color:var(--teal); margin-bottom:12px}
+  .note .nk{font-size:13.5px; font-weight:600; color:var(--fg); letter-spacing:.02em}
+  .note p{font-size:12.5px; color:var(--fg-dim); line-height:1.7; margin-top:10px; font-weight:300}
+  .notes .note:hover{background:color-mix(in srgb, var(--teal) 6%, var(--card)); transition-duration:.3s box-shadow:0 14px 28px -12px color-mix(in srgb, var(--teal) 40%, transparent);}
+
+  .quote{font-family:var(--body); font-style:italic; font-weight:500; font-size:clamp(15px,1.5vw,19px); color:var(--teal); margin-top:22px; max-width:70ch; line-height:1.5}
+
+  /* ---- fechamento ---- */
+  .logo-word{font-family:var(--display); font-size:clamp(32px,5.6vw,68px); font-weight:700; letter-spacing:-.015em; line-height:1.1; color:var(--fg)}
+  .logo-word b{font-weight:800; color:var(--teal)}
+  .close-sub{font-size:15px; color:var(--fg-dim); line-height:1.7; max-width:62ch; margin-top:24px; font-weight:300}
+  .close-grid{display:flex; gap:14px; flex-wrap:wrap; margin-top:44px}
+  .close-grid span{font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--teal); border:1px solid var(--line); padding:10px 16px; font-weight:600}
+  .almaz-sig{width:140px; height:auto; margin-top:64px; opacity:1; filter:drop-shadow(0 0 22px color-mix(in srgb, var(--teal) 30%, transparent)); image-rendering:-webkit-optimize-contrast}
+
+
+  /* ---- hero fx: drifting blobs, flowing ribbon, rising sparkles — spa-like ambiance personalized to Turquesa ---- */
+  .hero-fx{position:absolute; inset:0; overflow:hidden; z-index:0; pointer-events:none}
+  .blob{position:absolute; border-radius:50%; filter:blur(60px); animation:blobdrift 26s ease-in-out infinite}
+  .blob-a{width:440px; height:440px; background:radial-gradient(circle, color-mix(in srgb, var(--teal) 55%, transparent), transparent 70%); top:-100px; right:-80px}
+  .blob-b{width:380px; height:380px; background:radial-gradient(circle, color-mix(in srgb, var(--gold) 45%, transparent), transparent 70%); bottom:-120px; left:8%; animation-duration:32s; animation-delay:-9s}
+  @keyframes blobdrift{0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(28px,-22px) scale(1.08)} 66%{transform:translate(-22px,18px) scale(.96)}}
+  @media (prefers-reduced-motion:reduce){ .blob{animation:none} }
+
+  /* ribbon: same dotted-circuit language as the page kickers (.kline) — the cover is
+     where the circuit starts. Path itself stays still; only the brand mark travels,
+     triggered once on load same as any other page's kicker ("play" class). */
+  .ribbon{position:absolute; inset:0; width:100%; height:100%; opacity:.4}
+  .ribbon path{fill:none; stroke:var(--teal); stroke-width:1.4; stroke-dasharray:1 8; stroke-linecap:round}
+  .ribbon-mark{
+    position:absolute; left:0%; top:52%; width:22px; height:22px; margin:-11px 0 0 -11px;
+    z-index:1; opacity:0; pointer-events:none;
+  }
+  .hero-fx.play .ribbon-mark{ animation:ribbon-travel 9s ease-in-out infinite }
+  .ribbon-mark::before{
+    content:""; position:absolute; inset:-7px; border-radius:50%;
+    background:radial-gradient(circle, color-mix(in srgb, var(--teal) 55%, transparent), transparent 70%); opacity:0;
+  }
+  .hero-fx.play .ribbon-mark::before{ animation:kglow 9s ease-in-out infinite }
+  .ribbon-mark .bfly-icon{ width:100%; height:100%; position:relative }
+  @keyframes ribbon-travel{
+    0%{ left:0%; top:52%; opacity:0 }
+    8%{ opacity:1 }
+    22%{ left:22%; top:18% }
+    42%{ left:46%; top:80% }
+    58%{ left:58%; top:44% }
+    74%{ left:80%; top:12% }
+    92%{ opacity:1 }
+    100%{ left:100%; top:48%; opacity:0 }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .ribbon-mark{ animation:none !important; left:50% !important; top:48% !important; opacity:1 }
+    .ribbon-mark::before{ animation:none !important; opacity:.5 }
+  }
+
+  /* wellness glow pulses — soft breathing light, no filters on raster assets (kept
+     clean of the earlier drop-shadow "speckle" bug): plain blurred radial-gradient discs */
+  .glow-pulse{position:absolute; border-radius:50%; pointer-events:none; filter:blur(26px); animation:glowbreathe 6s ease-in-out infinite}
+  @keyframes glowbreathe{ 0%,100%{ opacity:.25; transform:scale(1) } 50%{ opacity:.6; transform:scale(1.12) } }
+  @media (prefers-reduced-motion:reduce){ .glow-pulse{animation:none; opacity:.4} }
+
+  .spark{position:absolute; width:5px; height:5px; border-radius:50%; background:var(--gold); opacity:0; animation:sparkfloat 8s ease-in infinite}
+  .spark.teal{background:var(--teal)}
+  .s1{left:14%; bottom:8%; animation-delay:.2s}
+  .s2{left:24%; bottom:4%; animation-delay:1.8s}
+  .s3{left:58%; bottom:10%; animation-delay:3.1s}
+  .s4{left:68%; bottom:6%; animation-delay:.9s}
+  .s5{left:78%; bottom:14%; animation-delay:4.4s}
+  .s6{left:40%; bottom:2%; animation-delay:2.6s}
+  .s7{left:88%; bottom:9%; animation-delay:5.2s}
+  @keyframes sparkfloat{
+    0%{opacity:0; transform:translateY(0) scale(.6)}
+    15%{opacity:.85}
+    85%{opacity:.4}
+    100%{opacity:0; transform:translateY(-240px) scale(1.15)}
+  }
+  @media (prefers-reduced-motion:reduce){ .spark{animation:none; display:none} }
+
+  /* ---- shimmer text (cover title) ---- */
+  .shimmer-text{
+    background:linear-gradient(100deg, var(--fg) 28%, var(--teal) 44%, var(--fg) 58%);
+    background-size:260% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:shimmer 7s ease-in-out infinite;
+  }
+  @keyframes shimmer{0%{background-position:0% 0} 50%{background-position:100% 0} 100%{background-position:0% 0}}
+  @media (prefers-reduced-motion:reduce){ .shimmer-text{animation:none; background:none; -webkit-background-clip:unset; background-clip:unset; color:var(--fg)} }
+
+  /* ---- brand orbit: a small swarm of the vector butterflies drifting in the corner —
+     a bookend flourish on the opening and closing screens. Replaces the old single
+     raster mark + mechanical rings (both read as clutter / low quality); three
+     butterflies at different sizes, depths and flap timing feel alive instead. ---- */
+  .brand-orbit{position:absolute; width:min(26vw,230px); height:min(26vw,230px); pointer-events:none; z-index:0}
+  .brand-orbit::before{
+    content:""; position:absolute; inset:14%; border-radius:50%;
+    background:radial-gradient(circle, color-mix(in srgb, var(--teal) 28%, transparent), transparent 70%);
+    filter:blur(14px); animation:orbitfloat 11s ease-in-out infinite;
+  }
+  .bfly-fly{position:absolute; animation:orbitfloat 9s ease-in-out infinite}
+  .bf-a{width:46%; height:46%; left:30%; top:22%; opacity:.92}
+  .bf-b{width:28%; height:28%; left:6%; top:52%; opacity:.6; animation-duration:7.5s; animation-delay:-2.4s}
+  .bf-b .bfly-icon .wl, .bf-b .bfly-icon .wr{ animation-duration:1.7s }
+  .bf-c{width:20%; height:20%; left:62%; top:8%; opacity:.42; animation-duration:10.5s; animation-delay:-5s}
+  .bf-c .bfly-icon .wl, .bf-c .bfly-icon .wr{ animation-duration:2.6s }
+  @keyframes orbitfloat{ 0%,100%{ transform:translateY(0) rotate(0deg) } 50%{ transform:translateY(-9px) rotate(-4deg) } }
+  @media (prefers-reduced-motion:reduce){ .bfly-fly, .brand-orbit::before{ animation:none } }
+  section.screen.dark .bfly-fly{ opacity:.85 }
+  section.screen.dark .bf-b{ opacity:.55 }
+  section.screen.dark .bf-c{ opacity:.4 }
+  section.screen.dark .brand-orbit::before{ background:radial-gradient(circle, color-mix(in srgb, var(--teal) 42%, transparent), transparent 70%) }
+
+  @media (max-width:680px){
+    .brand-orbit{display:none}
+    nav.dots{display:none}
+  }
+
+  /* ---- ambient corner blob: lighter version of hero-fx, reused on interior screens for "vida" ---- */
+  .corner-fx{position:absolute; inset:0; overflow:hidden; z-index:0; pointer-events:none}
+  .corner-fx .cb{position:absolute; width:320px; height:320px; border-radius:50%; filter:blur(70px); opacity:.5; animation:blobdrift 30s ease-in-out infinite}
+  .corner-fx .cb.teal{background:radial-gradient(circle, color-mix(in srgb, var(--teal) 50%, transparent), transparent 70%); top:-120px; right:-80px}
+  .corner-fx .cb.gold{background:radial-gradient(circle, color-mix(in srgb, var(--gold) 45%, transparent), transparent 70%); bottom:-100px; left:-60px; animation-duration:36s; animation-delay:-6s}
+  @media (prefers-reduced-motion:reduce){ .corner-fx .cb{animation:none} }
+
+  /* ---- count-up numbers: "os números precisam de movimentação" ---- */
+  .tile .v.counting{color:var(--teal)}
+
+  /* ---- generic inline icon ---- */
+  .ico{display:block}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
+
+<div id="progress"></div>
+
+
+<div id="scroller">
+
+<section class="screen" id="hero">
+  <div class="hero-fx" aria-hidden="true">
+  <div class="brand-orbit" style="right:4vw; bottom:6vh;" aria-hidden="true"><span class="bfly-fly bf-a"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span><span class="bfly-fly bf-b"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span><span class="bfly-fly bf-c"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></div>
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="glow-pulse" style="width:150px; height:150px; left:14%; top:18%; background:radial-gradient(circle, color-mix(in srgb, var(--teal) 50%, transparent), transparent 70%);"></div>
+    <div class="glow-pulse" style="width:120px; height:120px; left:58%; top:62%; background:radial-gradient(circle, color-mix(in srgb, var(--gold) 45%, transparent), transparent 70%); animation-delay:-3s;"></div>
+    <svg class="ribbon" viewBox="0 0 1440 500" preserveAspectRatio="none"><path d="M-100,260 C 220,90 480,400 800,220 S 1320,60 1650,240"/></svg>
+    <span class="ribbon-mark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span>
+    <span class="spark s1"></span><span class="spark s2 teal"></span><span class="spark s3"></span><span class="spark s4 teal"></span><span class="spark s5"></span><span class="spark s6 teal"></span><span class="spark s7"></span>
+  </div>
+  <span class="tag-corner cat">ALMAZ CONNECT</span>
+  <span class="tag-corner client">TURQUESA · BELEZA &amp; BEM-ESTAR</span>
+  <div class="inner">
+    <p class="cover-title reveal">Planejamento de comunicação digital</p>
+    <h1 class="cover-month reveal d1 shimmer-text">Redes sociais</h1>
+  </div>
+  <div class="swipe-cue reveal d3">Deslize <span class="chev"><span></span><span></span><span></span></span></div>
+</section>
+
+<section class="screen content" id="partida">
+  <div class="corner-fx" aria-hidden="true"><div class="cb teal"></div><div class="cb gold"></div></div>
+  <div class="inner">
+    <div class="kicker reveal"><span class="kn">01</span><span class="kt">Ponto de partida</span><span class="kline up" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0,13 Q200,2 400,13"/></svg><span class="kmark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></span></div>
+    <h2 class="heading reveal d1">O papel das redes sociais</h2>
+    <p class="dek reveal d1">Os perfis não serão catálogos de franquia. Serão canais de conteúdo sobre mercado, empreendedorismo, gestão e vida real de uma rede de beleza.</p>
+    <div class="steps chain reveal d2">
+      <div class="step"><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.3" y1="15.3" x2="21" y2="21"/></svg><div class="n">01</div><h3>Atrair</h3><p>Criar interesse pelo mercado de beleza e pela possibilidade de empreender.</p></div>
+      <div class="step"><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.6"><path d="M4 12a8 8 0 0 1 14-5"/><path d="M20 12a8 8 0 0 1-14 5"/><path d="M15 6h3V3"/><path d="M9 18H6v3"/></svg><div class="n">02</div><h3>Convencer</h3><p>Educar, quebrar objeções e mostrar por que uma franquia reduz parte da complexidade.</p></div>
+      <div class="step"><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.6"><path d="M12 21s-7-4.35-7-10a4.5 4.5 0 0 1 7-3.74A4.5 4.5 0 0 1 19 11c0 5.65-7 10-7 10z"/></svg><div class="n">03</div><h3>Reter &amp; fortalecer</h3><p>Continuar útil para quem já é franqueado: gestão, mercado, comunidade e desenvolvimento.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen content" id="publicos">
+  <div class="inner">
+    <div class="kicker reveal"><span class="kn">02</span><span class="kt">Estratégia</span><span class="kline down" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0,13 Q200,24 400,13"/></svg><span class="kmark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></span></div>
+    <h2 class="heading reveal d1">Com quem estamos falando?</h2>
+    <p class="dek reveal d1">Dois públicos convivem no mesmo canal, e a estratégia precisa funcionar para ambos.</p>
+    <div class="personas reveal d2">
+      <div class="persona"><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 18a7 7 0 0 1 16 0"/><circle cx="12" cy="8" r="4"/><path d="M4 21 2 19M20 21l2-2" opacity=".6"/></svg><span class="pk">01 · Potencial franqueado</span><h3>Quer empreender</h3><p>Quer empreender, diversificar renda ou mudar de carreira. Pode não dominar gestão ou o mercado de beleza. Precisa ganhar repertório, segurança e clareza.</p></div>
+      <div class="persona"><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/><path d="M3 12h18"/></svg><span class="pk">02 · Franqueado atual</span><h3>Já investiu</h3><p>Já tomou a decisão de investir. Quer aprender, melhorar a operação, acompanhar o mercado e sentir que pertence a uma rede que continua evoluindo.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen content" id="jornada">
+  <div class="corner-fx" aria-hidden="true"><div class="cb teal"></div><div class="cb gold"></div></div>
+  <div class="inner">
+    <div class="kicker reveal"><span class="kn">03</span><span class="kt">Jornada</span><span class="kline up" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0,13 Q200,2 400,13"/></svg><span class="kmark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></span></div>
+    <h2 class="heading reveal d1">Como a comunicação conduz sem pressionar</h2>
+    <p class="dek reveal d1">O objetivo é mover percepção antes de pedir ação.</p>
+    <div class="tiles reveal d2">
+      <div class="tile"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.3" y1="15.3" x2="21" y2="21"/></svg><div class="vl"><div class="v" style="font-size:clamp(18px,2vw,24px)">01 Descobrir</div><div class="l">Mercado + oportunidade</div></div></div>
+      <div class="tile"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg><div class="vl"><div class="v" style="font-size:clamp(18px,2vw,24px)">02 Identificar</div><div class="l">Vida real de quem empreende</div></div></div>
+      <div class="tile"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 6c-1.8-1.3-4-2-6.5-2v13.5c2.5 0 4.7.7 6.5 2 1.8-1.3 4-2 6.5-2V4c-2.5 0-4.7.7-6.5 2z"/><path d="M12 6v13.5"/></svg><div class="vl"><div class="v" style="font-size:clamp(18px,2vw,24px)">03 Entender</div><div class="l">Franquia + gestão</div></div></div>
+      <div class="tile"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.35-7-10a4.5 4.5 0 0 1 7-3.74A4.5 4.5 0 0 1 19 11c0 5.65-7 10-7 10z"/></svg><div class="vl"><div class="v" style="font-size:clamp(18px,2vw,24px)">04 Confiar</div><div class="l">Pessoas + bastidores + prova</div></div></div>
+    </div>
+    <p class="quote reveal d3">"Nem todo post precisa vender. Todo post precisa mover a percepção."</p>
+  </div>
+</section>
+
+<section class="screen content" id="pilares">
+  <div class="inner">
+    <div class="kicker reveal"><span class="kn">04</span><span class="kt">Arquitetura editorial</span><span class="kline down" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0,13 Q200,24 400,13"/></svg><span class="kmark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></span></div>
+    <h2 class="heading reveal d1">Os 7 pilares de assunto</h2>
+    <p class="dek reveal d1">Eles organizam o calendário sem transformar o perfil em uma sequência de ofertas.</p>
+    <div class="pillars reveal d2">
+      <div class="pillar"><div class="pn">01</div><h3>Mercado de beleza &amp; oportunidades</h3><p>Faz o potencial investidor enxergar beleza como negócio e mantém franqueados atualizados.</p><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg></div>
+      <div class="pillar"><div class="pn">02</div><h3>Empreendedorismo sem romantização</h3><p>Humaniza as porta-vozes e cria conexão com quem quer empreender, mas ainda não se vê como empreendedor.</p><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.3.2.5.6.5 1v.6h6v-.6c0-.4.2-.8.5-1A6 6 0 0 0 12 3z"/></svg></div>
+      <div class="pillar"><div class="pn">03</div><h3>Franquia descomplicada</h3><p>Reduz desconhecimento e transforma o modelo de franquia em algo compreensível e avaliável.</p><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 3h2a1 1 0 0 1 1 1 2 2 0 1 0 4 0 1 1 0 0 1 1-1h2v6a1 1 0 0 1-1 1 2 2 0 1 0 0 4 1 1 0 0 1 1 1v6h-6a1 1 0 0 1-1-1 2 2 0 1 0-4 0 1 1 0 0 1-1 1H3v-6a1 1 0 0 1 1-1 2 2 0 1 0 0-4 1 1 0 0 1-1-1V3z"/></svg></div>
+      <div class="pillar"><div class="pn">04</div><h3>Negócio Turquesa</h3><p>Pilar de conversão: conecta necessidades já discutidas com respostas concretas da Turquesa.</p><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6" fill="currentColor"/></svg></div>
+      <div class="pillar"><div class="pn">05</div><h3>Gestão na vida real</h3><p>Serve o franqueado atual e mostra ao futuro franqueado o conhecimento operacional por trás da marca.</p><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5v.3a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1h-.3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.5v-.3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.5 1h.3a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div>
+      <div class="pillar"><div class="pn">06</div><h3>Gente que faz a rede</h3><p>Troca argumento promocional por identificação: pessoas reais ajudam outras a se imaginar na rede.</p><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8.5" cy="8" r="3"/><circle cx="16" cy="9" r="2.3"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h2A4.5 4.5 0 0 1 14 18.5V20"/><path d="M15.5 14.3A4 4 0 0 1 19 18v2"/></svg></div>
+      <div class="pillar"><div class="pn">07</div><h3>Dentro da Turquesa</h3><p>Quem está fora vê uma rede viva. Quem está dentro se reconhece e reforça o vínculo com a marca.</p><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v10h12V10"/><path d="M10 20v-6h4v6"/></svg></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen content" id="personalidade">
+  <div class="inner">
+    <div class="kicker reveal"><span class="kn">05</span><span class="kt">Personalidade</span><span class="kline up" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0,13 Q200,2 400,13"/></svg><span class="kmark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></span></div>
+    <h2 class="heading reveal d1">Como a comunicação vai falar</h2>
+    <p class="dek reveal d1">Leve o suficiente para ser social. Séria o suficiente para falar de investimento e gestão.</p>
+    <div class="steps chain reveal d2">
+      <div class="step"><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.6"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M3 12h2M19 12h2"/><circle cx="12" cy="12" r="4.5"/></svg><div class="n">Clara</div><p style="margin-top:12px">Explica negócio sem jargão. Traduz franchising, gestão e mercado para quem pode estar pesquisando pela primeira vez.</p></div>
+      <div class="step"><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.6"><path d="M20.8 8.6c0 4.5-5.2 8-8.8 11-3.6-3-8.8-6.5-8.8-11a4.6 4.6 0 0 1 8.8-1.9A4.6 4.6 0 0 1 20.8 8.6z"/></svg><div class="n">Humana</div><p style="margin-top:12px">Fala de erros, dúvidas, decisões e bastidores. Menos "executiva ensinando"; mais "quem empreendeu compartilhando o que viu".</p></div>
+      <div class="step"><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8.5 10.2h.01M15.5 10.2h.01" stroke-linecap="round" stroke-width="2.2"/><path d="M7.5 14.5c1 1.8 2.6 2.8 4.5 2.8s3.5-1 4.5-2.8" stroke-linecap="round"/></svg><div class="n">Leve</div><p style="margin-top:12px">Humor observacional, situações reconhecíveis e ironia suave. Nunca ridicularizar investimento, equipe ou dificuldades reais.</p></div>
+    </div>
+    <p class="quote reveal d3">"Humor não é um pilar. É uma ferramenta." Entra pra abrir a conversa e deixar temas de negócio mais consumíveis.</p>
+  </div>
+</section>
+
+<section class="screen content dark" id="vozes">
+  <div class="corner-fx" aria-hidden="true"><div class="cb teal"></div><div class="cb gold"></div></div>
+  <div class="inner">
+    <div class="kicker reveal"><span class="kn">06</span><span class="kt">Porta-vozes</span><span class="kline down" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0,13 Q200,24 400,13"/></svg><span class="kmark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></span></div>
+    <h2 class="heading reveal d1">Duas vozes, uma estratégia</h2>
+    <p class="dek reveal d1">Os perfis podem compartilhar pilares, mas não precisam soar como a mesma pessoa.</p>
+    <div class="personas reveal d2">
+      <div class="persona"><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/><path d="M15.5 4.5a4 4 0 0 1 0 7" opacity=".5"/></svg><span class="pk">Visão &amp; pessoas</span><h3>Helena</h3><p>Tendências mais humanas, empreendedorismo, decisões, liderança, relacionamento com franqueados, mercado de beleza, novos projetos.<br><br><b style="color:var(--fg)">Tom:</b> próximo, reflexivo, humano e provocador.</p></div>
+      <div class="persona"><svg class="ico pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 20h8M12 17v3"/><path d="M7 9l3 3 2-2 3 3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="pk">Operação &amp; negócio</span><h3>Claudia</h3><p>Territórios mais racionais: gestão, franchising, operação, processos, implantação, padronização, indicadores e números.<br><br><b style="color:var(--fg)">Tom:</b> objetivo, didático, prático e direto.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen content" id="execucao">
+  <div class="inner">
+    <div class="kicker reveal"><span class="kn">07</span><span class="kt">Execução</span><span class="kline up" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0,13 Q200,2 400,13"/></svg><span class="kmark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></span></div>
+    <h2 class="heading reveal d1">Como os pilares viram conteúdo</h2>
+    <p class="dek reveal d1">A mesma frente editorial pode aparecer em formatos diferentes: o formato serve à ideia, não o contrário.</p>
+    <div class="formats reveal d2">
+      <div class="fmt"><svg class="ico fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor" stroke="none"/></svg><span class="fk">Reels</span><p>Opinião direta, situação com humor, bastidor, resposta a dúvida, comparação, conversa entre Helena e Claudia.</p></div>
+      <div class="fmt"><svg class="ico fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="5" width="6" height="14" rx="1"/><rect x="9" y="3.5" width="6" height="17" rx="1"/><rect x="15.5" y="5" width="6" height="14" rx="1"/></svg><span class="fk">Carrossel</span><p>Explicações comparativas, checklists, mercado, passo a passo, gestão, "o que eu olharia antes de abrir uma franquia".</p></div>
+      <div class="fmt"><svg class="ico fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><line x1="10" y1="19.5" x2="14" y2="19.5"/></svg><span class="fk">Stories</span><p>Rotina, visita a unidades, perguntas, enquete, opinião rápida, acompanhamento de bastidor, chamada comercial pontual.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen content" id="calendario">
+  <div class="inner">
+    <div class="kicker reveal"><span class="kn">08</span><span class="kt">Calendário</span><span class="kline down" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0,13 Q200,24 400,13"/></svg><span class="kmark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></span></div>
+    <h2 class="heading reveal d1">Como equilibrar o mês</h2>
+    <p class="dek reveal d1">A grade deve parecer um canal de negócio e beleza, não uma campanha permanente de venda.</p>
+    <div class="tiles tiles-fixed3 reveal d2">
+      <div class="tile"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg><div class="vl"><div class="v num" data-count="30" data-suffix="%">0%</div><div class="l">Mercado + gestão</div></div></div>
+      <div class="tile"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.3.2.5.6.5 1v.6h6v-.6c0-.4.2-.8.5-1A6 6 0 0 0 12 3z"/></svg><div class="vl"><div class="v num" data-count="20" data-suffix="%">0%</div><div class="l">Empreendedorismo</div></div></div>
+      <div class="tile"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 3h2a1 1 0 0 1 1 1 2 2 0 1 0 4 0 1 1 0 0 1 1-1h2v6a1 1 0 0 1-1 1 2 2 0 1 0 0 4 1 1 0 0 1 1 1v6h-6a1 1 0 0 1-1-1 2 2 0 1 0-4 0 1 1 0 0 1-1 1H3v-6a1 1 0 0 1 1-1 2 2 0 1 0 0-4 1 1 0 0 1-1-1V3z"/></svg><div class="vl"><div class="v num" data-count="15" data-suffix="%">0%</div><div class="l">Franquia descomplicada</div></div></div>
+      <div class="tile"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8.5" cy="8" r="3"/><circle cx="16" cy="9" r="2.3"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h2A4.5 4.5 0 0 1 14 18.5V20"/><path d="M15.5 14.3A4 4 0 0 1 19 18v2"/></svg><div class="vl"><div class="v num" data-count="15" data-suffix="%">0%</div><div class="l">Comunidade + histórias</div></div></div>
+      <div class="tile"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6" fill="currentColor"/></svg><div class="vl"><div class="v num" data-count="10" data-suffix="%">0%</div><div class="l">Negócio Turquesa</div></div></div>
+      <div class="tile"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="15" height="11" rx="1.5"/><path d="M18 10l4-2.5v9L18 14"/><circle cx="8" cy="12.5" r="2.3"/></svg><div class="vl"><div class="v num" data-count="10" data-suffix="%">0%</div><div class="l">Bastidores + cultura</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen content" id="diretrizes">
+  <div class="inner">
+    <div class="kicker reveal"><span class="kn">09</span><span class="kt">Diretrizes</span><span class="kline up" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0,13 Q200,2 400,13"/></svg><span class="kmark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></span></div>
+    <h2 class="heading reveal d1">O que sustenta credibilidade</h2>
+    <p class="dek reveal d1">Conteúdo de social pode ser leve sem ser impreciso.</p>
+    <div class="notes reveal d2">
+      <div class="note"><svg class="ico ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 11l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><div class="nk">Prova &gt; promessa</div><p>Usar histórias, processos e fatos reais. Promessas comerciais não viram afirmações editoriais sem comprovação.</p></div>
+      <div class="note"><svg class="ico ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.3.2.5.6.5 1v.6h6v-.6c0-.4.2-.8.5-1A6 6 0 0 0 12 3z"/></svg><div class="nk">Útil &gt; promocional</div><p>Mesmo quando a Turquesa é o assunto, o conteúdo precisa responder uma dúvida, ensinar um processo ou eliminar uma incerteza.</p></div>
+      <div class="note"><svg class="ico ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8.5" cy="8" r="3"/><circle cx="16" cy="9" r="2.3"/><path d="M3 20v-1.5A4.5 4.5 0 0 1 7.5 14h2A4.5 4.5 0 0 1 14 18.5V20"/><path d="M15.5 14.3A4 4 0 0 1 19 18v2"/></svg><div class="nk">Pessoas &gt; "case"</div><p>Franqueados e profissionais entram com contexto, decisão, desafio e aprendizado real, não só como depoimentos positivos.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen content" id="mensuracao">
+  <div class="inner">
+    <div class="kicker reveal"><span class="kn">10</span><span class="kt">Mensuração</span><span class="kline down" aria-hidden="true"><svg viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0,13 Q200,24 400,13"/></svg><span class="kmark"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></span></div>
+    <h2 class="heading reveal d1">O que observar nas redes</h2>
+    <p class="dek reveal d1">O objetivo não é apenas crescer audiência: é construir atenção qualificada e aproximar negócio.</p>
+    <div class="notes reveal d2">
+      <div class="note"><svg class="ico ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg><div class="nk">Atenção</div><p>Alcance qualificado, retenção de vídeo, salvamentos, compartilhamentos, crescimento por tema.</p></div>
+      <div class="note"><svg class="ico ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.5 8.5 0 1 1-4.1-7.3L21 3l-1.2 4A8.4 8.4 0 0 1 21 11.5z"/></svg><div class="nk">Relacionamento</div><p>Respostas, DMs, perguntas sobre franquia, interação de franqueados, menções a conteúdos específicos.</p></div>
+      <div class="note"><svg class="ico ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg><div class="nk">Negócio</div><p>Cliques para página de franquias, leads mencionando conteúdo, conversas comerciais, conteúdos que antecedem contato.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen dark" id="fim">
+  <div class="corner-fx" aria-hidden="true"><div class="cb teal"></div><div class="cb gold"></div></div>
+  <div class="brand-orbit" style="right:4vw; top:8vh;" aria-hidden="true"><span class="bfly-fly bf-a"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span><span class="bfly-fly bf-b"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span><span class="bfly-fly bf-c"><svg class="bfly-icon" viewBox="0 0 80 64" aria-hidden="true"><g class="wl"><path d="M40,22 C22,2 4,8 6,24 C3,40 24,38 40,28 Z" fill="currentColor"/><path d="M40,30 C26,28 10,40 14,52 C22,60 36,48 40,36 Z" fill="currentColor" opacity=".8"/></g><g class="wr"><path d="M40,22 C58,2 76,8 74,24 C77,40 56,38 40,28 Z" fill="currentColor"/><path d="M40,30 C54,28 70,40 66,52 C58,60 44,48 40,36 Z" fill="currentColor" opacity=".8"/></g><line x1="40" y1="16" x2="40" y2="44" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M40,17 C37,11 32,8 29,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M40,17 C43,11 48,8 51,9" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></span></div>
+  <div class="inner">
+    <p class="cover-title reveal">A ideia central</p>
+    <h2 class="logo-word reveal d1">Não criar um perfil<br>que <b>vende</b> franquia.</h2>
+    <p class="close-sub reveal d2">Criar um perfil que ajuda pessoas a entender mercado, empreendedorismo e gestão, e faz a Turquesa se tornar uma escolha natural para quem estiver pronto para investir.</p>
+    <div class="close-grid reveal d3">
+      <span>Utilidade</span><span>Autoridade</span><span>Confiança</span><span>Conversão</span>
+    </div>
+    <img class="almaz-sig reveal d4" src="data:image/png;base64,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" alt="Almaz Connect">
+  </div>
+</section>
+
+</div>
+
+<nav class="dots" id="dots">
+  <button data-target="hero" class="active"><span class="dot"></span></button>
+  <button data-target="partida"><span class="dot"></span></button>
+  <button data-target="publicos"><span class="dot"></span></button>
+  <button data-target="jornada"><span class="dot"></span></button>
+  <button data-target="pilares"><span class="dot"></span></button>
+  <button data-target="personalidade"><span class="dot"></span></button>
+  <button data-target="vozes"><span class="dot"></span></button>
+  <button data-target="execucao"><span class="dot"></span></button>
+  <button data-target="calendario"><span class="dot"></span></button>
+  <button data-target="diretrizes"><span class="dot"></span></button>
+  <button data-target="mensuracao"><span class="dot"></span></button>
+  <button data-target="fim"><span class="dot"></span></button>
+</nav>
+
+<script>
+(function(){
+  const scroller = document.getElementById('scroller');
+  const sections = Array.from(document.querySelectorAll('section.screen'));
+  const dotButtons = Array.from(document.querySelectorAll('nav.dots button'));
+  const progress = document.getElementById('progress');
+
+  function updateProgress(){
+    const max = scroller.scrollWidth - scroller.clientWidth;
+    const pct = max > 0 ? (scroller.scrollLeft / max) * 100 : 0;
+    progress.style.width = pct + '%';
+  }
+
+  function setActiveByIndex(idx){
+    dotButtons.forEach((b,i)=> b.classList.toggle('active', i===idx));
+  }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function animateCount(el){
+    const target = parseFloat(el.getAttribute('data-count'));
+    const suffix = el.getAttribute('data-suffix') || '';
+    // intentionally NOT gated by reduceMotion: this is the one explicitly requested
+    // "numbers moving" effect, counting up is not a vestibular/motion-sickness trigger
+    // the way parallax or spinning is, so it should always play.
+    if(isNaN(target)){ el.textContent = target + suffix; return; }
+    const dur = 1100;
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const idx = sections.indexOf(entry.target);
+        if(idx>-1) setActiveByIndex(idx);
+        const grids = entry.target.querySelectorAll('.tiles, .steps, .notes, .pillars, .personas, .formats');
+        grids.forEach(g=>g.classList.add('in'));
+        entry.target.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+        // re-plays every time the screen comes back into view, not just the first time —
+        // makes the "numbers moving" unmistakable whenever you land on this slide
+        entry.target.querySelectorAll('[data-count]').forEach(el=> animateCount(el));
+        // brand-mark "circuit": the mark only travels when its page becomes active —
+        // conforme a gente muda de página, a marca se movimenta. Re-triggered on every
+        // visit (remove+reflow+add) same pattern as the count-up re-play above.
+        entry.target.querySelectorAll('.kline').forEach(kl=>{
+          kl.classList.remove('play'); void kl.offsetWidth; kl.classList.add('play');
+        });
+        const heroFx = entry.target.querySelector('.hero-fx');
+        if(heroFx){
+          heroFx.classList.remove('play'); void heroFx.offsetWidth; heroFx.classList.add('play');
+        }
+      }
+    });
+  }, {root: scroller, threshold: 0.55});
+  sections.forEach(s=>io.observe(s));
+
+  dotButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const target = document.getElementById(btn.getAttribute('data-target'));
+      if(target) target.scrollIntoView({behavior:'smooth', inline:'start', block:'nearest'});
+    });
+  });
+
+  scroller.addEventListener('scroll', updateProgress, {passive:true});
+  updateProgress();
+
+  const heroSection = document.getElementById('hero');
+  if(heroSection){
+    heroSection.addEventListener('mousemove', (e)=>{
+      const r = heroSection.getBoundingClientRect();
+      heroSection.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
+      heroSection.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
+    });
+  }
+
+  // wheel: translate vertical wheel to horizontal scroll for desktop mice/trackpads
+  scroller.addEventListener('wheel', (e)=>{
+    if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+      scroller.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }
+  }, {passive:false});
+
+  document.addEventListener('keydown', (e)=>{
+    const idx = dotButtons.findIndex(b=>b.classList.contains('active'));
+    if(e.key === 'ArrowRight' && idx < sections.length-1){
+      sections[idx+1].scrollIntoView({behavior:'smooth', inline:'start'});
+    } else if(e.key === 'ArrowLeft' && idx > 0){
+      sections[idx-1].scrollIntoView({behavior:'smooth', inline:'start'});
+    }
+  });
+})();
+</script>
